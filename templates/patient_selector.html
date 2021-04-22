@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block mainContent %}
+    <div>
+        <h3>Patients</h3>
+
+        <div id="patientLookup">
+            <input id="autoComplete" type="text" tabindex="1" />
+            <div class="selection"></div>
+        </div>
+       <!--  <ul class="patients">
+            {%if patients%}
+            {% for p in patients %}
+                <li><a rel="patient" href="{{ url_for('patient',ptid=p.id)}}">
+                    {{p.lastName}}, {{p.firstName}} [MRN: {{p.id}}]
+                </a></li>
+            {% endfor %}
+            {%endif%}
+        </ul> -->
+    </div>
+
+    <div>
+        <form class="new-patient" action="{{ url_for('patients')}}" method="post" enctype="application/x-www-form-urlencoded">
+            <label>Add new patient:</label>
+            <br/><label>First name:</label>
+            <input id="first_name" name="first_name" value="" placeholder="" required="true" />
+            <br/><label>Last name:</label>
+            <input id="last_name" name="last_name" value="" placeholder="" required="true" />
+            <br/><label>Email:</label>
+            <input id="e_mail" name="e_mail" value="" placeholder="" required="true" />
+            <br/><input type="submit" value="Submit" />
+        </form>
+    </div>
+    Return <a rel="home" href="{{ url_for('logout')}}">home</a>.
+    <script src="{{ url_for('static', filename='js/autoComplete.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+{% endblock %}

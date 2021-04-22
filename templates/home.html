@@ -1,0 +1,10 @@
+
+{% extends "layout.html" %}
+{% block mainContent %}
+    <div>
+        <a href="{{ url_for('select_patient')}}">Add Patient</a>
+    </div>
+    <div>
+        <a href="{{ url_for('display_roster')}}">View Roster</a>
+    </div>
+{% endblock %}
