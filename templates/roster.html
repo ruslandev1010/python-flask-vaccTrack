@@ -4,4 +4,18 @@
     <div>
         ROSTER
     </div>
+    <table>
+        <tr>
+          <th>firstname</th>
+          <th>lastname</th>
+          <th>email</th>
+        </tr>
+        {% for patient in patients %}
+            <tr>
+            <td>{{ patient['firstname'] }}</td>
+            <td>{{ patient['lastname'] }}</td>
+            <td>{{ patient['email'] }}</td>
+            </tr>
+        {% endfor %}
+      </table>
 {% endblock %}

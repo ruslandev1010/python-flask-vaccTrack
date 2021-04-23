@@ -37,7 +37,13 @@ there will be a patient ID and a patient_info object
 @app.route('/roster')
 @login_required
 def display_roster():
-    return render_template('roster.html')
+    patients = fdb.query_db_get_all('SELECT * FROM '+_PATIENTS_TABLE)
+    return render_template('roster.html', patients=patients)
+
+@app.route('/home')
+@login_required
+def home():
+    return render_template('home.html')
 
 @app.route('/patient_select')
 @login_required
@@ -50,12 +56,16 @@ def patients():
     '''Works'''
     if request.method == 'GET':
         patient_list = fdb.query_db_get_all('SELECT * FROM '+_PATIENTS_TABLE)
+        #return "OK"
+        #return patient_list
+       # return render_template('roster.html', patients=patient_list)
         print(patient_list)
         return jsonify(patient_list)
     elif request.method == 'POST':
-        fName = request.form['fname']
-        lName = request.form['lname']
-        result=fdb.query_db_change('INSERT INTO '+_PATIENTS_TABLE+'(firstName, lastName) VALUES ({0}, {0})'.format(_PLACEHOLDER),(fName, lName))
+        fName = request.form['first_name']
+        lName = request.form['last_name']
+        email = request.form['e_mail']
+        result=fdb.query_db_change('INSERT INTO '+_PATIENTS_TABLE+'(firstname, lastname, email) VALUES ({0}, {0}, {0})'.format(_PLACEHOLDER),(fName, lName, email))
         if result==None:
             print("Could not insert new record into",_PATIENTS_TABLE)
         return redirect(url_for('select_patient'))
@@ -88,5 +98,6 @@ def measurement(ptid,mid):
     return render_template('measurement.html',patient=patient_info, measurement=pt_msmt)
 
 if __name__ == '__main__':
+    app.debug = True
     app.run(port=_PORT, host=_HOST)
 

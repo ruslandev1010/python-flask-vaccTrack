@@ -19,7 +19,7 @@
     </div>
 
     <div>
-        <form class="new-patient" action="{{ url_for('patients')}}" method="post" enctype="application/x-www-form-urlencoded">
+        <form class="new-patient" action="/patients" method="POST">
             <label>Add new patient:</label>
             <br/><label>First name:</label>
             <input id="first_name" name="first_name" value="" placeholder="" required="true" />
@@ -30,7 +30,7 @@
             <br/><input type="submit" value="Submit" />
         </form>
     </div>
-    Return <a rel="home" href="{{ url_for('logout')}}">home</a>.
+    Return <a rel="home" href="{{ url_for('home')}}">home</a>.
     <script src="{{ url_for('static', filename='js/autoComplete.js') }}"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 

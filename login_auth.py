@@ -101,9 +101,8 @@ def register():
 @app.route('/logout')
 @login_required
 def logout():
-    #logout_user()
-    return render_template('home.html')
-    #return redirect(url_for('index'))
+    logout_user()
+    return redirect(url_for('index'))
 
 #keep route very secret!!!
 @app.route('/backdoor34748947347678643324329089321879843297', methods=['GET'])
