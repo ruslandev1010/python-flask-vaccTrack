@@ -50,16 +50,31 @@ def home():
 def select_patient():
     return render_template('patient_selector.html')
 
+@app.route('/autocomplete', methods=['GET'])
+def autocomplete():
+    search = request.args.get('q')
+    query = 'SELECT * FROM '+_PATIENTS_TABLE + ' WHERE firstname LIKE %s OR lastname LIKE %s'
+    args = ('%' + search + '%', '%' + search + '%')
+    patient_list = fdb.query_db_get_all(query, args)
+    patients = []
+    for patient in patient_list:
+        name = patient["firstname"] + " " + patient["lastname"]
+        patients.append(name)
+    # for (i = 0; i < patient_list.length; i++) {
+
+    # }
+    return jsonify(patients)
+
 @app.route('/patients',methods=['GET', 'POST'])
 @login_required
 def patients():
     '''Works'''
     if request.method == 'GET':
-        patient_list = fdb.query_db_get_all('SELECT * FROM '+_PATIENTS_TABLE)
+        patient_list = fdb.query_db_get_all("SELECT * FROM "+_PATIENTS_TABLE)
         #return "OK"
         #return patient_list
        # return render_template('roster.html', patients=patient_list)
-        print(patient_list)
+        #print(patient_list)
         return jsonify(patient_list)
     elif request.method == 'POST':
         fName = request.form['first_name']
@@ -70,18 +85,19 @@ def patients():
             print("Could not insert new record into",_PATIENTS_TABLE)
         return redirect(url_for('select_patient'))
 
-@app.route('/patient/<ptid>/'+_APP_NAME, methods=['GET', 'POST'])
+@app.route('/patient/<int:ptid>/'+_APP_NAME, methods=['GET', 'POST'])
 @login_required
 def patient(ptid):
     '''Works '''
     if request.method == 'GET':
         patient_info = fdb.query_db_get_one('SELECT * FROM '+_PATIENTS_TABLE+' WHERE id={0}'.format(_PLACEHOLDER),(ptid,))
         #retrieve measurements
-        query='SELECT * FROM '+_MEASUREMENTS_TABLE+' WHERE patient_id={0}'.format(_PLACEHOLDER) # this IS good enough@
+        #query='SELECT * FROM '+_MEASUREMENTS_TABLE+' WHERE patient_id={0}'.format(_PLACEHOLDER) # this IS good enough@
         #no need to join - keeping the patient and measurements dictionary separate, makes it easier/more intuitive to write the template code
         #query='SELECT * FROM '+_MEASUREMENTS_TABLE+' as v JOIN (SELECT * FROM Patients WHERE id={0}) as p ON v.patient_id=p.id'.format(_PLACEHOLDER)
-        patient_measurements = fdb.query_db_get_all(query,(ptid,))
-        return render_template('patient.html', patient=patient_info, measurements=patient_measurements)
+        #patient_measurements = fdb.query_db_get_all(query,(ptid,))
+        #return render_template('patient.html', patient=patient_info, measurements=patient_measurements)
+        return render_template('patient.html', patient=patient_info)
 
     elif request.method == 'POST':
         systolic = request.form['systolic']

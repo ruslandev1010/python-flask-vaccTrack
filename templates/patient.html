@@ -1,32 +1,19 @@
+
 {% extends "layout.html" %}
 {% block mainContent %}
     <div>
-        <h3>[MRN: {{patient.id}}]{{patient.firstName}} {{patient.lastName}}'s Vitals Readings</h3>
-
-        <ul class="measurements">
-            {%if measurements%}
-            {% for m in measurements %}
-                <li><a rel="measurement" href="{{ url_for('measurement',ptid=m.patient_id,mid=m.id)}}">
-                    BP:{{ m.systolic }}/{{ m.diastolic }}, P:{{ m.pulse }}
-                </a></li>
-            {% endfor %}
-            {%endif%}
-        </ul>
+        PAITENT
     </div>
-
     <div>
-        <form class="new-measurement" action="{{ url_for('patient',ptid=patient.id)}}" method="post" enctype="application/x-www-form-urlencoded">
-            <label>Add new vitals measurements:</label>
-            <br/><label>Blood pressure:</label>
-            <input id="systolic" name="systolic" value="" placeholder="###" required="true" />
-            /
-            <input id="diastolic" name="diastolic" value="" placeholder="##" required="true" />
-            <br/><label>Pulse:</label>
-            <input id="pulse" name="pulse" value="" placeholder="##" required="false" />
-
-            <br/><input type="submit" value="Submit" />
-        </form>
-
-    Return <a rel="patients" href="{{ url_for('select_patient')}}">patient list</a>.    </div>
-    Return <a rel="home" href="{{ url_for('root')}}">home</a>.
+        id: {{ patient['id'] }}
+    </div>
+    <div>
+        firstname: {{patient['firstname']}}
+    </div>
+    <div>
+        lastname: {{ patient['lastname'] }}
+    </div>
+    <div>
+        email: {{ patient['email'] }}
+    </div>
 {% endblock %}

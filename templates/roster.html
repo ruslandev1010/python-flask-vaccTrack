@@ -15,6 +15,9 @@
             <td>{{ patient['firstname'] }}</td>
             <td>{{ patient['lastname'] }}</td>
             <td>{{ patient['email'] }}</td>
+            <td>
+              <a href="{{ url_for('patient', ptid=patient['id']) }}">View</a>
+            </td>
             </tr>
         {% endfor %}
       </table>
