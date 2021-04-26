@@ -42,8 +42,9 @@ class User(object):
 @login_manager.user_loader
 
 # def create_patients_table():
-#     res = fdb.query_db_create('CREATE TABLE Patients (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, firstname VARCHAR(255), lastname VARCHAR(255), address VARCHAR(255), city VARCHAR(255), dob DATE, apt INT, sex VARCHAR(255), postalcode VARCHAR(255), province VARCHAR(255))')
+#     res = fdb.query_db_create('CREATE TABLE wait_patients (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), dob DATE, healthcard INT, email VARCHAR(255), vaccinetype VARCHAR(255))')
 #     return res
+
 def load_user(id):
     first_match=fdb.query_db_get_one('SELECT id, username, password FROM Users WHERE id = {0}'.format(_PLACEHOLDER), (id,))
 
@@ -102,7 +103,7 @@ def register():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('root'))
 
 #keep route very secret!!!
 @app.route('/backdoor34748947347678643324329089321879843297', methods=['GET'])

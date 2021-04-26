@@ -12,6 +12,7 @@ _APP_NAME='VaccTrack'
 #database
 _MEASUREMENTS_TABLE='Measurements'
 _PATIENTS_TABLE='Patients'
+_WAITPATIENTS_TABLE='wait_patients'
 
 _DB_ENGINE='MYSQL'#'MYSQL'
 

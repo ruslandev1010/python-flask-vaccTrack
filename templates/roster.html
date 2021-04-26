@@ -1,24 +1,44 @@
 
 {% extends "layout.html" %}
 {% block mainContent %}
+    <div style="margin-bottom: 30px;">
+      <input id="search" onkeyup="SearchAndFilterThingy()" type="text" placeholder="Search..">
+    </div>
     <div>
         ROSTER
     </div>
-    <table>
-        <tr>
-          <th>firstname</th>
-          <th>lastname</th>
-          <th>email</th>
-        </tr>
-        {% for patient in patients %}
-            <tr>
-            <td>{{ patient['firstname'] }}</td>
-            <td>{{ patient['lastname'] }}</td>
-            <td>{{ patient['email'] }}</td>
-            <td>
-              <a href="{{ url_for('patient', ptid=patient['id']) }}">View</a>
-            </td>
-            </tr>
-        {% endfor %}
-      </table>
+    <table id="rosterTable">
+      <tr>
+        <th>firstname</th>
+        <th>lastname</th>
+        <th>email</th>
+      </tr>
+      {% for patient in patients %}
+          <tr>
+          <td>{{ patient['firstname'] }}</td>
+          <td>{{ patient['lastname'] }}</td>
+          <td>{{ patient['email'] }}</td>
+          <td>
+            <a href="{{ url_for('patient', ptid=patient['id']) }}">View</a>
+          </td>
+          <td>
+            {% if patient['firstdose'] == 1 or patient['seconddose'] == 1 or patient['thirddose'] == 1 %}
+              <button>Complete</button>
+            {% else %}
+              <button>Incomplete</button>
+            {% endif %}
+          </td>
+          </tr>
+      {% endfor %}
+    </table>
+
+  <div style="margin-top: 10px;">
+    Wait-list patients
+  </div>
+  <ul style="list-style-type:none">
+    {% for waitPatient in waitPatients %}
+    <li>{{ waitPatient['name'] + " - " + waitPatient['estimatetime']}}</li>
+    {% endfor %}
+  </ul>
+  <a href="{{ url_for('home')}}">Back</a>
 {% endblock %}

@@ -4,11 +4,11 @@
     <title>VaccTrack</title>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}"></script>
     <div class="topnav">
-        <a class="active" href="#home">Home</a>
-        <a href="patient_selector.html">Patient</a>
-        <a href="provider.html">Provider</a>
-        <input id="search" type="text" placeholder="Search..">
+        <a class="active" href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('preSchedule') }}">Patient</a>
+        <a href="{{ url_for('register') }}">Provider</a>
     </div>
 </head>
 <body>
@@ -19,6 +19,7 @@
 </body>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<script src="{{ url_for('static', filename='js/filter.js') }}"></script>
 <script>
     $(function() {
         $("#search").autocomplete({
@@ -32,6 +33,53 @@
             minLength: 2,
             select: function(event, ui) {
                 console.log(ui.item.value); // not in your question, but might help later
+                SearchAndFilterThingy();
+            }
+        });
+        $("#preSchedule-submit").click(function() {
+            event.preventDefault();
+            $('#name1').val($('#name').val());
+            $('#date1').val($('#date').val());
+            $('#healthcard1').val($('#healthcard').val());
+            $('#email1').val($('#email').val());
+            $('#vaccine-select1').val($('#vaccine-select').val());
+            $('#preSchedule-form').css('display', 'none');
+            $('#confirmMsg').css('display', '');
+        });
+        $("#update-form-submit").click(function() {
+            event.preventDefault();
+            if ($(this).val() == 'Edit') {
+                $(this).val('Update');
+                $('#firstname').attr('disabled', false);
+                $('#lastname').attr('disabled', false);
+                $('#Email').attr('disabled', false);
+                $('#firstdose').attr('disabled', false);
+                $('#seconddose').attr('disabled', false);
+                $('#thirddose').attr('disabled', false);
+            } else {
+                $(this).val('Edit');
+                $('#firstname').attr('disabled', true);
+                $('#lastname').attr('disabled', true);
+                $('#Email').attr('disabled', true);
+                $('#firstdose').attr('disabled', true);
+                $('#seconddose').attr('disabled', true);
+                $('#thirddose').attr('disabled', true);
+                // $('#firstdose').val($('#firstdose').is(":checked"))
+                // $('#seconddose').val($('#seconddose').is(":checked"))
+                // $('#thirddose').val($('#thirddose').is(":checked"))
+                var firstname = $('#firstname').val();
+                var lastname = $('#lastname').val();
+                var email = $('#Email').val();
+                var firstdose = $('#firstdose').is(":checked") ? 1 : 0;
+                var seconddose = $('#seconddose').is(":checked") ? 1 : 0;
+                var thirddose = $('#thirddose').is(":checked") ? 1: 0;
+                $.ajax({
+                    url : '/patient/' + $('#id').val() + '/VaccTrack',
+                    dataType: "json",
+                    type: "post",
+                    data: {firstname: firstname, lastname: lastname, email: email, firstdose: firstdose, seconddose: seconddose, thirddose: thirddose},
+                    success: function( data ) {}
+                });
             }
         });
     })

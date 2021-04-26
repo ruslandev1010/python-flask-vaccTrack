@@ -1,19 +1,36 @@
 
 {% extends "layout.html" %}
 {% block mainContent %}
-    <div>
-        PAITENT
-    </div>
-    <div>
-        id: {{ patient['id'] }}
-    </div>
-    <div>
-        firstname: {{patient['firstname']}}
-    </div>
-    <div>
-        lastname: {{ patient['lastname'] }}
-    </div>
-    <div>
-        email: {{ patient['email'] }}
-    </div>
+    <form id="update-patient-form" action="#" name="update-patient-form">
+        <div>
+            <label for="id">Id:</label>
+            <input type="text" value="{{ patient['id'] }}" id="id" name="id" disabled>
+        </div>
+        <div>
+            <label for="firstname">FirstName:</label>
+            <input type="text" value="{{patient['firstname']}}" id="firstname" name="firstname" disabled>
+        </div>
+        <div>
+            <label for="lastname">LastName:</label>
+            <input type="text" value="{{ patient['lastname'] }}" id="lastname" name="lastname" disabled>
+        </div>
+        <div>
+            <label for="email">Email:</label>
+            <input type="text" value="{{ patient['email'] }}" id="Email" name="Email" disabled>
+        </div>
+        <div>
+            <label for="firstdose">First Dose:</label>
+            <input type="checkbox" value="{{ patient['firstdose'] }}" id="firstdose" name="firstdose" {{'checked' if patient['firstdose'] else ''}} disabled>
+        </div>
+        <div>
+            <label for="seconddose">Second Dose:</label>
+            <input type="checkbox" value="{{ patient['seconddose'] }}" id="seconddose" name="seconddose" {{'checked' if patient['seconddose'] else ''}} disabled>
+        </div>
+        <div>
+            <label for="thirddose">Third Dose:</label>
+            <input type="checkbox" value="{{ patient['thirddose']  }}" id="thirddose" name="thirddose" {{'checked' if patient['thirddose'] else ''}} disabled>
+        </div>
+        <input type="submit" value="Edit" id="update-form-submit" />
+    </form>
+    <a href="{{ url_for('display_roster')}}">Back</a>
 {% endblock %}

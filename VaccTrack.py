@@ -1,5 +1,5 @@
 from flask import g, render_template, request, make_response, redirect, url_for, jsonify
-from setup import app, _PORT,_HOST, _APP_NAME, _PATIENTS_TABLE,_MEASUREMENTS_TABLE,_PLACEHOLDER
+from setup import app, _PORT,_HOST, _APP_NAME, _PATIENTS_TABLE,_MEASUREMENTS_TABLE,_PLACEHOLDER,_WAITPATIENTS_TABLE
 from HIM73050 import flask_db as fdb
 from login_auth import login_required
 from flask import jsonify
@@ -38,7 +38,8 @@ there will be a patient ID and a patient_info object
 @login_required
 def display_roster():
     patients = fdb.query_db_get_all('SELECT * FROM '+_PATIENTS_TABLE)
-    return render_template('roster.html', patients=patients)
+    waitPatients = fdb.query_db_get_all("SELECT * FROM "+_WAITPATIENTS_TABLE)
+    return render_template('roster.html', patients=patients, waitPatients=waitPatients)
 
 @app.route('/home')
 @login_required
@@ -50,12 +51,37 @@ def home():
 def select_patient():
     return render_template('patient_selector.html')
 
+@app.route('/preschedule', methods=['GET'])
+@login_required
+def preSchedule():
+    return render_template('pre-schedule.html')
+
+@app.route('/wait-patients',methods=['GET', 'POST'])
+@login_required
+def waitPatients():
+    if request.method == 'GET':
+        waitPatients = fdb.query_db_get_all("SELECT * FROM "+_WAITPATIENTS_TABLE)
+        return redirect(url_for('preSchedule'))
+    elif request.method == 'POST':
+        name = request.form['name1']
+        date = request.form['date1']
+        healthcard = request.form['healthcard1']
+        email = request.form['email1']
+        vaccinetype = request.form['vaccinetype1']
+        estimatetime = request.form['estimateTime']
+        result=fdb.query_db_change('INSERT INTO '+_WAITPATIENTS_TABLE+'(name, dob, healthcard, email, vaccinetype, estimatetime) VALUES ({0}, {0}, {0}, {0}, {0}, {0})'.format(_PLACEHOLDER),(name, date, healthcard, email, vaccinetype, estimatetime))
+        if result==None:
+            print("Could not insert new record into",_WAITPATIENTS_TABLE)
+        return redirect(url_for('preSchedule'))
+
 @app.route('/autocomplete', methods=['GET'])
+@login_required
 def autocomplete():
     search = request.args.get('q')
     query = 'SELECT * FROM '+_PATIENTS_TABLE + ' WHERE firstname LIKE %s OR lastname LIKE %s'
     args = ('%' + search + '%', '%' + search + '%')
     patient_list = fdb.query_db_get_all(query, args)
+    # return jsonify(patient_list)
     patients = []
     for patient in patient_list:
         name = patient["firstname"] + " " + patient["lastname"]
@@ -80,7 +106,8 @@ def patients():
         fName = request.form['first_name']
         lName = request.form['last_name']
         email = request.form['e_mail']
-        result=fdb.query_db_change('INSERT INTO '+_PATIENTS_TABLE+'(firstname, lastname, email) VALUES ({0}, {0}, {0})'.format(_PLACEHOLDER),(fName, lName, email))
+        tmp = False
+        result=fdb.query_db_change('INSERT INTO '+_PATIENTS_TABLE+'(firstname, lastname, email, firstdose, seconddose, thirddose) VALUES ({0}, {0}, {0}, {0}, {0}, {0})'.format(_PLACEHOLDER),(fName, lName, email, tmp, tmp, tmp))
         if result==None:
             print("Could not insert new record into",_PATIENTS_TABLE)
         return redirect(url_for('select_patient'))
@@ -100,10 +127,16 @@ def patient(ptid):
         return render_template('patient.html', patient=patient_info)
 
     elif request.method == 'POST':
-        systolic = request.form['systolic']
-        diastolic = request.form['diastolic']
-        pulse = request.form['pulse']
-        fdb.query_db_change('INSERT INTO '+_MEASUREMENTS_TABLE+'(systolic, diastolic, pulse, patient_id) VALUES ({0}, {0}, {0}, {0})'.format(_PLACEHOLDER),(systolic, diastolic, pulse,ptid))
+        firstname = request.form['firstname']
+        lastname = request.form['lastname']
+        email = request.form['email']
+        firstdose = request.form['firstdose']
+        seconddose = request.form['seconddose']
+        thirddose = request.form['thirddose']
+        query = 'UPDATE patients SET firstname=%s, lastname=%s, email=%s, firstdose=%s, seconddose=%s, thirddose=%s WHERE id=%s'
+        args = (firstname, lastname, email, firstdose, seconddose, thirddose, ptid)
+
+        fdb.query_db_change(query, args)
         return redirect(url_for('patient',ptid=ptid))
 
 @app.route('/patient/<ptid>/'+_APP_NAME+'/measurement/<mid>')
